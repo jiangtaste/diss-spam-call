@@ -122,7 +122,7 @@ print(is_ln)
 
 if is_ln == '1':
     systemd_url = input(
-        '请输入您systemd路径 (默认/etc/systemd/system): ') or '/etc/systemd/system'
+        '请输入您systemd路径 (默认/lib/systemd/system): ') or '/lib/systemd/system'
     status, output = subprocess.Popen('sudo ln -s %s/system/%s.service %s' %
                                       (cwd, cur_dir, systemd_url))
     if status == 0:
