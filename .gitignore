@@ -100,4 +100,7 @@ ENV/
 # mypy
 .mypy_cache/
 
+# custom ignore
 .vscode/
+uwsgi.ini
+system/
