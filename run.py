@@ -1,14 +1,7 @@
 """ 程序运行入口 """
-from flask import Flask
+from app import create_app
 
-app = Flask(__name__)
-
-
-@app.route('/wx')
-def wx():
-    """ Demo """
-    return "<h1>Hello World!</h1>"
-
+app = create_app()
 
 if __name__ == '__main__':
     app.run()
