@@ -117,7 +117,8 @@ create_file('system/%s.service' % cur_dir, service)
 print('成功！service路径：%s/system/%s.service' % (cwd, cur_dir))
 
 # 链接system
-is_ln = input('是否需要配置system: (1. 需要， 2. 不需要 | 默认：2)') | 2
+is_ln = input('是否需要配置system (1. 需要， 2. 不需要 | 默认：2): ') or 2
+print(is_ln)
 
 if is_ln == '1':
     nginx_enable_url = input(
