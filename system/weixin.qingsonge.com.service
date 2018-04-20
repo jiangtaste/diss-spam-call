@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve weixin.qingsonge.com
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/var/www/weixin.qingsonge.com
+Environment="PATH=/var/www/weixin.qingsonge.com/bin"
+ExecStart=/var/www/weixin.qingsonge.com/bin/uwsgi --ini myproject.ini
+
+[Install]
+WantedBy=multi-user.target
