@@ -119,7 +119,7 @@ print('成功！service路径：%s/system/%s.service' % (cwd, cur_dir))
 # 链接system
 is_ln = input('是否需要配置system: (1. 需要， 2. 不需要 | 默认：2)') | 2
 
-if is_ln == 1:
+if is_ln == '1':
     nginx_enable_url = input(
         '请输入您nginx的enbale路径: (默认/etc/nginx/sites-enabled) '
     ) | '/etc/nginx/sites-enabled'
