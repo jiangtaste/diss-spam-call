@@ -121,11 +121,10 @@ is_ln = input('是否需要配置system (1. 需要， 2. 不需要 | 默认：2)
 print(is_ln)
 
 if is_ln == '1':
-    nginx_enable_url = input(
-        '请输入您nginx的enbale路径 (默认/etc/nginx/sites-enabled): '
-    ) or '/etc/nginx/sites-enabled'
+    systemd_url = input(
+        '请输入您systemd路径 (默认/etc/systemd/system): ') or '/etc/systemd/system'
     status, output = subprocess.Popen('sudo ln -s %s/system/%s.service %s' %
-                                      (cwd, cur_dir, nginx_enable_url))
+                                      (cwd, cur_dir, systemd_url))
     if status == 0:
         print('成功!')
         print('自行启动命令: sudo systemctl start %s' % cur_dir)
