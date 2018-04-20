@@ -122,8 +122,8 @@ print(is_ln)
 
 if is_ln == '1':
     nginx_enable_url = input(
-        '请输入您nginx的enbale路径: (默认/etc/nginx/sites-enabled) '
-    ) | '/etc/nginx/sites-enabled'
+        '请输入您nginx的enbale路径 (默认/etc/nginx/sites-enabled): '
+    ) or '/etc/nginx/sites-enabled'
     status, output = subprocess.Popen('sudo ln -s %s/system/%s.service %s' %
                                       (cwd, cur_dir, nginx_enable_url))
     if status == 0:
