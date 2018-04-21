@@ -4,6 +4,12 @@ from flask import request
 import hashlib
 
 
+@wx.route('/')
+def index():
+    """ 无聊的Joke """
+    return 'I am Fine, tks for visit.'
+
+
 @wx.route('/wx', methods=['GET', 'POST'])
 def weixin():
     """ Wexin """
@@ -28,4 +34,4 @@ def weixin():
         if hashlib.sha1(str).hexdigest() == signature:
             return echostr
         else:
-            return None
+            return "验证失败"
