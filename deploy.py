@@ -85,7 +85,7 @@ uwsgi = [
     'master = true\n',
     'processes = 5',
     '\n',
-    'daemonize = /var/log/uwsgi.%s.log\n' % cur_dir,
+    'daemonize = /tmp/uwsgi.%s.log\n' % cur_dir,
     'socket = /tmp/%s.sock\n' % cur_dir,
     'chmod-socket = 660\n',
     'vacuum = true\n',
@@ -118,22 +118,10 @@ create_file('system/%s.service' % cur_dir, service)
 print('成功！service路径：%s/system/%s.service' % (cwd, cur_dir))
 
 # 链接system
-is_ln = input('是否需要配置system (1. 需要， 2. 不需要 | 默认：2): ') or 2
-print(is_ln)
-
-if is_ln == '1':
-    systemd_url = input(
-        '请输入您systemd路径 (默认/lib/systemd/system): ') or '/lib/systemd/system'
-    status, output = subprocess.Popen('sudo ln -s %s/system/%s.service %s' %
-                                      (cwd, cur_dir, systemd_url))
-    if status == 0:
-        print('成功!')
-        print('自行启动命令: sudo systemctl start %s' % cur_dir)
-        print('开机启动命令: sudo systemctl enable %s' % cur_dir)
-    else:
-        print(output)
-else:
-    print('跳过system的配置')
+print('添加service: sudo ln -s %s/system/%s.service /lib/systemd/system' %
+      (cwd, cur_dir))
+print('启动: sudo systemctl start %s' % cur_dir)
+print('开机自启: sudo systemctl enable %s' % cur_dir)
 
 # Nginx
 print('懒了，手动配置nginx的配置吧')
