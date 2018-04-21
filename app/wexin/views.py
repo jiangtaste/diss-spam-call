@@ -7,7 +7,6 @@ import hashlib
 @wx.route('/wx', methods=['GET', 'POST'])
 def weixin():
     """ Wexin """
-
     if request.method == 'GET':
         # Token, 同公众号服务器配置保持一只
         token = "MII7DnXwxLOrzG0AMVJbhpQjRrECPHcs"
