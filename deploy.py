@@ -85,6 +85,7 @@ uwsgi = [
     'master = true\n',
     'processes = 5',
     '\n',
+    'daemonize = /var/log/uwsgi.%s.log\n' % cur_dir,
     'socket = /tmp/%s.sock\n' % cur_dir,
     'chmod-socket = 660\n',
     'vacuum = true\n',
