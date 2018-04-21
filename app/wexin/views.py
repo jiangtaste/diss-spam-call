@@ -29,10 +29,8 @@ def weixin():
 
         # 拼接字符串
         str = ''.join(s)
-        print(signature)
-        print(str)
 
-        #比较
+        # 比较
         if hashlib.sha1(str.encode('utf-8')).hexdigest() == signature:
             return echostr
         else:
