@@ -33,7 +33,7 @@ def weixin():
         print(str)
 
         #比较
-        if hashlib.sha1(str).hexdigest() == signature:
+        if hashlib.sha1(str.encode('utf-8')).hexdigest() == signature:
             return echostr
         else:
             return "验证失败"
