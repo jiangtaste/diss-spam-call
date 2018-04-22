@@ -48,7 +48,7 @@ def weixin():
 
     if request.method == 'POST':
         # 处理POST
-        xmldata = request.args
+        xmldata = request.data
         xml_rec = ET.fromstring(xmldata)
 
         ToUserName = xml_rec.find('ToUserName').text
@@ -56,6 +56,7 @@ def weixin():
         MsgType = xml_rec.find('MsgType').text
         Content = xml_rec.find('Content').text
         MsgId = xml_rec.find('MsgId').text
+        print(MsgType)
 
         return reply_msg(MsgType) % (fromUser, ToUserName, int(time.time()),
                                      Content)
