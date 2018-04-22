@@ -2,6 +2,10 @@
 from . import wx
 from flask import request
 import hashlib
+import xml.etree.cElementTree as etree
+import time
+from .templates import reply_msg
+""" 下边是路由部分 """
 
 
 @wx.route('/')
@@ -36,4 +40,14 @@ def weixin():
         else:
             return "验证失败"
     if request.method == 'POST':
-        request "success"
+        xmldata = request.args
+        xml_rec = etree.fromstring(xmldata)
+
+        ToUserName = xml_rec.find('ToUserName').text
+        fromUser = xml_rec.find('FromUserName').text
+        MsgType = xml_rec.find('MsgType').text
+        Content = xml_rec.find('Content').text
+        MsgId = xml_rec.find('MsgId').text
+
+        return reply_msg(msg_type) % (fromUser, ToUserName, int(time.time()),
+                                      Content)
