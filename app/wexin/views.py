@@ -18,14 +18,18 @@ def index():
 def weixin():
     """ Wexin """
     if request.method == 'GET':
-        # Token, 同公众号服务器配置保持一只
-        token = "MII7DnXwxLOrzG0AMVJbhpQjRrECPHcs"
+        if len(request.args) == 0:
+            return "Hello, this is the weixin handle view."
+
         # 获取参数
         data = request.args
         signature = data.get('signature', '')
         timestamp = data.get('timestamp', '')
         nonce = data.get('nonce', '')
         echostr = data.get('echostr', '')
+
+        # Token, 同公众号服务器配置保持一只
+        token = "MII7DnXwxLOrzG0AMVJbhpQjRrECPHcs"
 
         # 进行字典排序
         s = [token, timestamp, nonce]
@@ -34,11 +38,13 @@ def weixin():
         # 拼接字符串
         str = ''.join(s)
 
+        # hash
+        hasecode = hashlib.sha1(str.encode('utf-8')).hexdigest()
         # 比较
-        if hashlib.sha1(str.encode('utf-8')).hexdigest() == signature:
+        if hasecode == signature:
             return echostr
         else:
-            return "验证失败"
+            return "认证失败，不是微信服务器的请求！"
 
     if request.method == 'POST':
         # 处理POST
@@ -51,5 +57,5 @@ def weixin():
         Content = xml_rec.find('Content').text
         MsgId = xml_rec.find('MsgId').text
 
-        return reply_msg(msg_type) % (fromUser, ToUserName, int(time.time()),
-                                      Content)
+        return reply_msg(MsgType) % (fromUser, ToUserName, int(time.time()),
+                                     Content)
