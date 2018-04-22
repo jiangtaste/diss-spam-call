@@ -35,3 +35,5 @@ def weixin():
             return echostr
         else:
             return "验证失败"
+    if request.method == 'POST':
+        request "success"
