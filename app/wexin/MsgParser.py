@@ -78,6 +78,7 @@ def recv_msg(oriData):
                 ToUserName,
                 'Content':
                 '不支持此条腹黑命令：%s，若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”，然后复制骚扰过你的号码。我们将对其腹黑骚扰...（千万别拿自己的或好友的号码来测试，不对其后果负责）'
+                % Content
             }
 
     return xmldict
