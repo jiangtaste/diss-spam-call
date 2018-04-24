@@ -32,8 +32,9 @@ def recv_msg(oriData):
 
         # 判断action类型
         if action['type'] == 'freeCall':
-            if freeCall.check_phone(Content):
-                if freeCall.start_call(Content):
+            phone_num = freeCall.check_phone(Content)
+            if phone_num:
+                if freeCall.start_call(phone_num):
                     # 移除最后一条任务
                     del action_query[-1]
 

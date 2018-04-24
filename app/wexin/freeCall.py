@@ -66,23 +66,28 @@ def start_call(phone):
     params = {'f': f, 'id': id, 'tk': tk, 'vtel': phone, '_': _ + 1}
 
     # 提交打电话申请
-    print('提交骚扰，申请中...')
+    print('提交骚扰，号码：%s...' % phone)
     request = sss.get(get_call_url, params=params)
 
     if request.status_code == 200:
-        print('申请成功，%s' % (request.json()['msg']))
+        print('申请成功，%s' % request.content)
         return True
     else:
         print('申请失败，请稍后重试。')
         return False
 
 
-def check_phone(phone_num):
+def check_phone(phone):
     """
     正则匹配电话号码
 
     :param phone_num:
     :return True, False
     """
-    phone_num_re = re.compile('^0\d{2,3}\d{7,8}$|^1[358]\d{9}$|^147\d{8}')
-    return phone_num_re.match(phone_num)
+    phone_re = re.compile('^0\d{2,3}\d{7,8}$|^1[358]\d{9}$|^147\d{8}')
+    phone_num = re.sub("\D", "", phone)
+
+    if phone_re.match(phone_num):
+        return phone_num
+    else:
+        return False
