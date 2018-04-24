@@ -1,9 +1,9 @@
 """ 微信视图模块 """
-from . import wx
-from flask import request, make_response
+import os
 import hashlib
+from flask import request, make_response
+from . import wx
 from . import MsgParser
-""" 下边是路由部分 """
 
 
 @wx.route('/')
@@ -27,7 +27,7 @@ def weixin():
         echostr = data.get('echostr', '')
 
         # Token, 同公众号服务器配置保持一只
-        token = "MII7DnXwxLOrzG0AMVJbhpQjRrECPHcs"
+        token = os.getenv('SECRET_KEY')
 
         # 进行字典排序
         s = [token, timestamp, nonce]
