@@ -1,4 +1,5 @@
 """ 消息关键字回复 """
+import time
 from app.models import Query, Action
 from . import DissCall
 
@@ -29,16 +30,20 @@ def keywords_parser(msg):
                 # 电话验证通过, 提交骚扰
                 if DissCall.start_call(phone_num):
                     # 提交成功
-                    msg['Content'] = '成功腹黑骚扰号码%s一次' % phone
+
+                    expire = query.expire - int(time.time())
+
+                    msg['Content'] = '成功腹黑%s一次，已将其加入DISS骚扰队列。你可在%s秒内继续添加骚扰号码。' % (
+                        phone, expire)
                     return msg
                 else:
                     # 提交失败
-                    msg['Content'] = '腹黑骚扰号码%s失败，请稍后重试！' % phone
+                    msg['Content'] = '腹黑%s失败，请稍后重试！' % phone
                     return msg
 
             else:
                 # 电话验证不通过
-                msg['Content'] = '请输入合法的电话号码%s: ' % phone
+                msg['Content'] = '请输入合法的电话号码：'
                 return msg
     elif msg['Content'] in diss_call_keywords:
         # query不存在，但命中diss_call关键字
@@ -49,12 +54,12 @@ def keywords_parser(msg):
         a = Query.save(action)
 
         # 组织msg
-        msg['Content'] = '请添加骚扰过您的电话（6分钟内有效）'
+        msg['Content'] = '请添加骚扰过您的电话：'
 
         return msg
     else:
         # 未命中任何关键字
-        msg['Content'] = '不支持命令：%s，若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”，然后复制骚扰过你的号码。我们将对其腹黑骚扰...（千万别拿自己的或好友的号码来测试，不对其后果负责）' % msg[
+        msg['Content'] = '不支持指令：%s。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）' % msg[
             'Content']
 
         return msg
