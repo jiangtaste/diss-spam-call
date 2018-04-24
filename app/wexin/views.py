@@ -4,6 +4,7 @@ import hashlib
 from flask import request, make_response
 from . import wx
 from . import MsgParser
+from . import KwParser
 
 
 @wx.route('/')
@@ -16,6 +17,7 @@ def index():
 def weixin():
     """ Wexin """
     if request.method == 'GET':
+        # 这里处理微信服务器认证
         if len(request.args) == 0:
             return "Hello, this is the weixin handle view."
 
@@ -45,9 +47,14 @@ def weixin():
             return "认证失败，不是微信服务器的请求！"
 
     if request.method == 'POST':
-        # 处理POST
+        # 处理POST, 解析xml消息
         xmldict = MsgParser.recv_msg(request.data)
-        reply_xml = MsgParser.submit_msg(xmldict)
+
+        # keywords 命中处理
+        reply_msg = KwParser.keywords_parser(xmldict)
+
+        # 组织xml
+        reply_xml = MsgParser.submit_msg(reply_msg)
 
         # response
         response = make_response(reply_xml)

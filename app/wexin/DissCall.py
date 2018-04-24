@@ -73,7 +73,7 @@ def start_call(phone):
         print('申请成功，%s' % request.content)
         return True
     else:
-        print('申请失败，请稍后重试。')
+        print('申请失败，请稍后重试。%s' % request.content)
         return False
 
 
@@ -81,13 +81,16 @@ def check_phone(phone):
     """
     正则匹配电话号码
 
-    :param phone_num:
-    :return True, False
+    :param phone: 用户输入的电话号码
+    :return phone_num: 纯数字的电话号码, phone
     """
     phone_re = re.compile('^0\d{2,3}\d{7,8}$|^1[358]\d{9}$|^147\d{8}')
+
+    # 去掉非数字的符号
     phone_num = re.sub("\D", "", phone)
 
     if phone_re.match(phone_num):
+        # 验证通过则返回去除非空字符的纯数字号码
         return phone_num
     else:
         return False
