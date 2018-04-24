@@ -17,14 +17,10 @@ def keywords_parser(msg):
     query_id = msg['FromUserName']
 
     # 查询query
-    print(query_id)
     query = Query.filter_by_id(query_id)
-    print(query)
 
     if query:
         # query存在，优先处理query
-        print('query存在: %s: %s' % (query.id, query.action))
-
         if query.action == 'diss_call':
             # 开始diss_call骚扰，先使用DissCall验证输入的号码
             phone_num = DissCall.check_phone(phone)
@@ -51,10 +47,6 @@ def keywords_parser(msg):
 
         # 不在init中触发add，会有诡异问题，单数使用类方法add
         a = Query.save(action)
-        print(len(a))
-        for i in a:
-            print(i.id)
-        # print('添加query成功, query_id: %s' % Query.filter_by_id(query_id).id)
 
         # 组织msg
         msg['Content'] = '请添加骚扰过您的电话（6分钟内有效）'

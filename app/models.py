@@ -9,15 +9,12 @@ class Query(object):
 
     @staticmethod
     def filter_by_id(id):
-        print(Query.queries)
         if len(Query.queries) == 0:
             return None
 
-        print('12 %s' % id)
         for query in Query.queries:
             # queries不为空
             if query.id == id:
-                print('123 %s' % id)
                 # 存在query, 同一用户同一时间只能存在一个query
                 if query.expire < int(time.time()):
                     # query已过期，删除此query，返回None
