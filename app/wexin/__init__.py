@@ -3,4 +3,4 @@ from flask import Blueprint
 
 wx = Blueprint('wx', __name__)
 
-from . import views, templates
+from . import views

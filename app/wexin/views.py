@@ -1,10 +1,8 @@
 """ 微信视图模块 """
 from . import wx
-from flask import request
+from flask import request, make_response
 import hashlib
-import xml.etree.cElementTree as ET
-import time
-from .templates import reply_msg
+from . import MsgParser
 """ 下边是路由部分 """
 
 
@@ -48,15 +46,11 @@ def weixin():
 
     if request.method == 'POST':
         # 处理POST
-        xmldata = request.data
-        xml_rec = ET.fromstring(xmldata)
+        xmldict = MsgParser.recv_msg(request.data)
+        reply_xml = MsgParser.submit_msg(xmldict)
 
-        ToUserName = xml_rec.find('ToUserName').text
-        fromUser = xml_rec.find('FromUserName').text
-        MsgType = xml_rec.find('MsgType').text
-        Content = xml_rec.find('Content').text
-        MsgId = xml_rec.find('MsgId').text
-        print(MsgType)
+        # response
+        response = make_response(reply_xml)
+        response.content_type = 'application/xml'
 
-        return reply_msg(MsgType) % (fromUser, ToUserName, int(time.time()),
-                                     Content)
+        return response
