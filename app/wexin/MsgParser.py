@@ -2,6 +2,11 @@
 
 import time
 import xml.etree.cElementTree as ET
+from . import freeCall
+
+keywords = ['骚扰号码', '骚扰电话']
+action_query = []
+xmldict = {}
 
 
 def recv_msg(oriData):
@@ -19,16 +24,59 @@ def recv_msg(oriData):
     Content = xmldata.find('Content').text
     MsgId = xmldata.find('MsgId').text
 
-    xmldict = {
-        "FromUserName": FromUserName,
-        "ToUserName": ToUserName,
-        "Content": Content
-    }
+    # 处理业务逻辑
+
+    if len(action_query) > 0:
+        # 处理action队列，最后一条任务开始
+        action = action_query[-1]
+
+        # 判断action类型
+        if action['type'] == 'freeCall':
+            if freeCall.check_phone(Content):
+                if freeCall.start_call(Content):
+                    # 移除最后一条任务
+                    del action_query[-1]
+
+                    # 返回消息
+                    xmldict = {
+                        'FromUserName': FromUserName,
+                        'ToUserName': ToUserName,
+                        'Content': '腹黑骚扰@%s开始...' % Content
+                    }
+                else:
+                    # 返回消息
+                    xmldict = {
+                        'FromUserName': FromUserName,
+                        'ToUserName': ToUserName,
+                        'Content': '内部错误，骚扰失败...'
+                    }
+            else:
+                # 返回消息
+                xmldict = {
+                    'FromUserName': FromUserName,
+                    'ToUserName': ToUserName,
+                    'Content': '请输入正确的手机号码'
+                }
+    else:
+        # action队列为空，处理新任务
+        if Content in keywords:
+            xmldict = {
+                'FromUserName': FromUserName,
+                'ToUserName': ToUserName,
+                'Content': '请输入骚扰号码...'
+            }
+            action_query.append({'type': 'freeCall', 'expire': 72000})
+        else:
+            xmldict = {
+                'FromUserName': FromUserName,
+                'ToUserName': ToUserName,
+                'Content': Content
+            }
 
     return xmldict
 
 
-def submit_msg(content_dict={"": ""}, type="text"):
+def submit_msg(content_dict={': '}, type='text'):
     """
     编制回复信息
 
@@ -38,7 +86,7 @@ def submit_msg(content_dict={"": ""}, type="text"):
     """
     to_name = content_dict['FromUserName']
     from_name = content_dict['ToUserName']
-    content = "对啊, %s, 然后呢？" % content_dict['Content']
+    content = content_dict['Content']
 
     reply_xml = """
     <xml>

@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flask = "*"
 uwsgi = "*"
+requests = "*"
 
 [dev-packages]
 pydocstyle = "*"
