@@ -55,11 +55,14 @@ def keywords_parser(msg):
 
         # 组织msg
         msg['Content'] = '请添加骚扰过您的电话：'
-
         return msg
     else:
         # 未命中任何关键字
-        msg['Content'] = '不支持指令：%s。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）' % msg[
-            'Content']
-
-        return msg
+        if msg['MsgType'] == 'text':
+            # 仅当文本类型为text时
+            msg['Content'] = '不支持指令：%s。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）' % msg[
+                'Content']
+            return msg
+        else:
+            # 文本类型为event或image等，返回MsgParser处理后的内容
+            return msg

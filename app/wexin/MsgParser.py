@@ -40,16 +40,20 @@ def recv_msg(oriData):
             'FromUserName': FromUserName,
             'ToUserName': ToUserName,
             'Content': '暂不支持此类型消息',
-            'MsgType': 'text'
+            'MsgType': MsgType
         }
     elif MsgType == 'event':
         # 消息类型为event, 切event为subscribe时
         if xmldata.find('Event').text == 'subscribe':
             xmldict = {
-                'FromUserName': FromUserName,
-                'ToUserName': ToUserName,
-                'Content': '谢谢您的关注！',
-                'MsgType': 'text'
+                'FromUserName':
+                FromUserName,
+                'ToUserName':
+                ToUserName,
+                'Content':
+                '谢谢您的关注！若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责',
+                'MsgType':
+                MsgType
             }
 
     return xmldict
