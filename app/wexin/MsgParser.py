@@ -61,17 +61,20 @@ def recv_msg(oriData):
     else:
         # action队列为空，处理新任务
         if Content in keywords:
+            # 命中关键字，则添加任务
             xmldict = {
                 'FromUserName': FromUserName,
                 'ToUserName': ToUserName,
                 'Content': '请输入骚扰号码...'
             }
+            # 目前只有一个腹黑骚扰工具，所以这里偷懒了
             action_query.append({'type': 'freeCall', 'expire': 72000})
         else:
+            # 未命中关键字，什么也不处理
             xmldict = {
                 'FromUserName': FromUserName,
                 'ToUserName': ToUserName,
-                'Content': Content
+                'Content': '不支持此条腹黑命令：%s，若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”，然后复制骚扰过你的号码。我们将对其腹黑骚扰...（千万别拿自己的或好友的号码来测试，不对其后果负责）'
             }
 
     return xmldict
