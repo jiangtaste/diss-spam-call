@@ -3,6 +3,8 @@ import requests
 import time
 import random
 import re
+import json
+from flask import abort
 
 
 def start_call(phone):
@@ -52,12 +54,18 @@ def start_call(phone):
     # 获取token
     print('--------start--------')
     print('准备骚扰，获取Token....')
-    tk = sss.get(get_token_url, params=params).json()['data']['tk']
+    request = sss.get(get_token_url, params=params).json()
+
+    try:
+        tk = request['data']['tk']
+    except KeyError:
+        return abort(401)
 
     if tk:
         print('获取成功，Token: %s' % (tk))
     else:
         print('获取失败，请重试')
+        return False
 
     # 配置call_url
     get_call_url = 'http://lxbjs.baidu.com/cb/call'
@@ -70,7 +78,12 @@ def start_call(phone):
     request = sss.get(get_call_url, params=params)
 
     if request.status_code == 200:
-        print('申请成功，%s' % request.content)
+        try:
+            res_json = loads_jsonp(request.text)
+        except:
+            raise ValueError('Invalid jsonp input')
+        print('申请成功，Status: %s, Message: %s' % (res_json['status'],
+                                                res_json['msg']))
         return True
     else:
         print('申请失败，请稍后重试。%s' % request.content)
@@ -99,3 +112,22 @@ def check_phone(phone):
         return phone_num
     else:
         return False
+
+
+# 作者：阿阿聪
+# 链接：https://www.zhihu.com/question/52841349/answer/132564221
+# 来源：知乎
+# 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+def loads_jsonp(_jsonp):
+    """ 
+    解析jsonp
+
+    :param _jsonp
+    :return json
+    """
+    try:
+        return json.loads(re.match(".*?({.*}).*", _jsonp, re.S).group(1))
+    except:
+        raise ValueError('Invalid Input')

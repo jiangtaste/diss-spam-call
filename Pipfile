@@ -7,6 +7,8 @@ name = "pypi"
 flask = "*"
 uwsgi = "*"
 requests = "*"
+raven = "*"
+blinker = "*"
 
 [dev-packages]
 pydocstyle = "*"
