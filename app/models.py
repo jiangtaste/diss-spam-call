@@ -11,7 +11,7 @@ class Query(object):
         """ 初始化 """
         self.id = id
         self.action = action
-        self.expire = int(time.time()) + expire  # 过期时间戳: s
+        self.expire = int(time.time() + expire)  # 过期时间戳: s
 
         # 初始化是添加至queries
         Query.queries.append(self)
