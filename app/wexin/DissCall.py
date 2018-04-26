@@ -97,8 +97,12 @@ def start_call(phone):
             res_json = loads_jsonp(request.text)
         except:
             raise ValueError('Invalid jsonp input')
-        print('成功，Status: {status}, Message: {msg}'.format(
-            status=res_json['status'], msg=res_json['msg']))
+
+        print(res_json)
+        # 分析: res_json['status'] 为0时，会自动接通商户，大概率会很快收到电话骚扰。非0时，会短信通知商户，这种情况下可能不会电话骚扰或不会立即电话骚扰。
+
+        # Todo: 状态非0时，尝试继续提交DISS请求
+
         return True
     else:
         print('失败，{error}'.format(error=request.content))
