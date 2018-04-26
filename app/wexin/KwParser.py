@@ -1,6 +1,6 @@
 """ 消息关键字回复 """
 import time
-from app.models import Query, Action
+from app.models import Query
 from . import DissCall
 
 diss_call_keywords = ['骚扰电话', '骚扰号码']
@@ -48,10 +48,7 @@ def keywords_parser(msg):
     elif msg['Content'] in diss_call_keywords:
         # query不存在，但命中diss_call关键字
         # 添加diss_call的query, 360s后过期
-        action = Action(query_id, 'diss_call', 360)
-
-        # 不在init中触发add，会有诡异问题，单数使用类方法add
-        a = Query.save(action)
+        action = Query(query_id, 'diss_call', 360)
 
         # 组织msg
         msg['Content'] = '请添加骚扰过您的电话：'

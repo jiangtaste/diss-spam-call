@@ -3,9 +3,18 @@ import time
 
 
 class Query(object):
-    """ Query 管理类 """
+    """ Query类 """
 
     queries = []
+
+    def __init__(self, id, action, expire):
+        """ 初始化 """
+        self.id = id
+        self.action = action
+        self.expire = int(time.time()) + expire  # 过期时间戳: s
+
+        # 初始化是添加至queries
+        Query.queries.append(self)
 
     @staticmethod
     def filter_by_id(id):
@@ -25,18 +34,3 @@ class Query(object):
                     return query
         else:
             return None
-
-    @staticmethod
-    def save(query):
-        Query.queries.append(query)
-        return Query.queries
-
-
-class Action(object):
-    """ Action 类 """
-
-    def __init__(self, id, action, expire):
-        """ 初始化 """
-        self.id = id
-        self.action = action
-        self.expire = int(time.time()) + expire  # 过期时间戳: s
