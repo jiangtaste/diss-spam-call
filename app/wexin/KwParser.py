@@ -33,12 +33,12 @@ def keywords_parser(msg):
 
                     expire = query.expire - int(time.time())
 
-                    msg['Content'] = '成功腹黑%s一次，已将其加入DISS骚扰队列。你可在%s秒内继续添加骚扰号码。' % (
-                        phone, expire)
+                    msg['Content'] = '成功DISS{phone}一次，已将其加入DISS骚扰队列。你可在{expire}秒内继续添加骚扰号码。'.format(
+                        phone=phone, expire=expire)
                     return msg
                 else:
                     # 提交失败
-                    msg['Content'] = '腹黑%s失败，请稍后重试！' % phone
+                    msg['Content'] = 'DISS{phone}失败，请稍后重试！'.format(phone=phone)
                     return msg
 
             else:
@@ -60,8 +60,8 @@ def keywords_parser(msg):
         # 未命中任何关键字
         if msg['MsgType'] == 'text':
             # 仅当文本类型为text时
-            msg['Content'] = '不支持指令：%s。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）' % msg[
-                'Content']
+            msg['Content'] = '不支持指令：{content}。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）'.format(
+                content=msg['Content'])
             return msg
         else:
             # 文本类型为event或image等，返回MsgParser处理后的内容
