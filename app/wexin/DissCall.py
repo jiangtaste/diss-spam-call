@@ -36,7 +36,7 @@ def start_call(phone):
         'Host':
         'lxbjs.baidu.com',
         'Referer':
-        'http://lxbjs.baidu.com/cb/url/show?f=%s&id=%s' % (f, id),
+        'http://lxbjs.baidu.com/cb/url/show?f={f}&id={id}'.format(f=f, id=id),
         'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
         'X-Requested-With':
@@ -61,8 +61,7 @@ def start_call(phone):
     sss = requests.Session()
 
     # 获取token
-    print('--------start--------')
-    print('准备骚扰，获取Token....')
+    print('获取Token....')
     request = sss.get(get_token_url, params=params)
 
     try:
@@ -71,7 +70,7 @@ def start_call(phone):
         return abort(401)
 
     if tk:
-        print('获取成功，Token: %s' % (tk))
+        print('获取成功，Token: {tk}'.format(tk=tk))
     else:
         print('获取失败，请重试')
         return False
@@ -90,7 +89,7 @@ def start_call(phone):
     }
 
     # 提交打电话申请
-    print('提交骚扰，号码：%s...' % phone)
+    print('骚扰号码：{phone}'.format(phone=phone))
     request = sss.get(get_call_url, params=params)
 
     if request.status_code == 200:
@@ -98,11 +97,11 @@ def start_call(phone):
             res_json = loads_jsonp(request.text)
         except:
             raise ValueError('Invalid jsonp input')
-        print('申请成功，Status: %s, Message: %s' % (res_json['status'],
-                                                res_json['msg']))
+        print('成功，Status: {status}, Message: {msg}'.format(
+            status=res_json['status'], msg=res_json['msg']))
         return True
     else:
-        print('申请失败，请稍后重试。%s' % request.content)
+        print('失败，{error}'.format(error=request.content))
         return False
 
 
