@@ -9,6 +9,7 @@ uwsgi = "*"
 requests = "*"
 raven = "*"
 blinker = "*"
+python-dotenv = "*"
 
 [dev-packages]
 pydocstyle = "*"
