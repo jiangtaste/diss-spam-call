@@ -10,6 +10,7 @@ requests = "*"
 raven = "*"
 blinker = "*"
 python-dotenv = "*"
+schedule = "*"
 
 [dev-packages]
 pydocstyle = "*"
