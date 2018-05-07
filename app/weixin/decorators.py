@@ -6,11 +6,6 @@ from flask import g, request, make_response
 from app import redis_store
 from . import messages
 
-# 分发消息：dispatch
-# 1. 根据事件类型分发消息
-# 2. 根据消息内容分发消息
-# 3. 根据错误码分发消息
-
 
 # 解析xml消息
 def msg_parser(func):
@@ -22,6 +17,7 @@ def msg_parser(func):
     #
     @wraps(func)
     def wrapper(*args, **kw):
+
         if request.method == 'POST':
             # 使用ET解析XML
             req_data = ET.fromstring(request.data)
@@ -31,7 +27,17 @@ def msg_parser(func):
             FromUserName = req_data.find('FromUserName').text
             MsgType = req_data.find('MsgType').text
 
-            if MsgType == 'text':
+            if g.res_msg['Content'] == 429:
+                # 触发ratelimit限制
+                g.res_msg = {
+                    'ToUserName': ToUserName,
+                    'FromUserName': FromUserName,
+                    'Content': messages.out_rate_limit,
+                    'MsgType': 'text'
+                }
+
+                return func(*args, **kw)
+            elif MsgType == 'text':
                 # 文本消息
                 Content = req_data.find('Content').text
 
@@ -40,6 +46,46 @@ def msg_parser(func):
                     'FromUserName': FromUserName,
                     'Content': Content,
                     'MsgType': 'text'
+                }
+
+                return func(*args, **kw)
+            elif MsgType in [
+                    'image', 'voice', 'video', 'shortvideo', 'link', 'location'
+            ]:
+                # 暂不支持的消息类型
+                g.res_msg = {
+                    'ToUserName': ToUserName,
+                    'FromUserName': FromUserName,
+                    'Content': messages.unknown_type,
+                    'MsgType': 'text'
+                }
+
+                return func(*args, **kw)
+            elif MsgType == 'event':
+                # 消息类型为event
+                Event = req_data.find('Event').text
+                if Event == 'subscribe':
+                    # 订阅（关注公众号）事件
+                    g.res_msg = {
+                        'FromUserName': FromUserName,
+                        'ToUserName': ToUserName,
+                        'MsgType': 'text',
+                        'Content': messages.subscribe
+                    }
+
+                    return func(*args, **kw)
+                else:
+                    # 取消订阅事件
+                    response = make_response('resolve unsubscribe event', 200)
+                    return response
+
+            else:
+                # 位置的事件类型
+                g.res_msg = {
+                    'FromUserName': FromUserName,
+                    'ToUserName': ToUserName,
+                    'MsgType': 'text',
+                    'Content': messages.unknown_type
                 }
                 return func(*args, **kw)
         else:
@@ -95,12 +141,12 @@ def ratelimit(requests=100, window=60, by="ip"):
             if remaining > 0:
                 # 剩余请求次数>0，则redis记录+1，并进入后续处理
                 redis_store.incr(key, 1)
+                g.res_msg = {'Content': 200}
                 return func(*args, **kw)
             else:
-                # return make_response("Too Many Requests", 429)
-                # 这里无法直接返回429，而是记录429到g，然后在msg处理逻辑
-                g.err_code = 429
-                print(g.err_code)
+                # return make_response('Too Many Requests', 429)
+                # 这里无法直接返回429，而是记录msg到g
+                g.res_msg = {'Content': 429}
                 return func(*args, **kw)
 
         return wrapped

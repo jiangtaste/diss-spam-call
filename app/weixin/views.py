@@ -5,7 +5,6 @@ import time
 from flask import g, request, make_response, render_template
 from .decorators import ratelimit, msg_parser
 from . import wx
-from . import MsgParser
 from . import KwParser
 
 
