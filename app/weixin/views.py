@@ -1,22 +1,24 @@
 """ 微信视图模块 """
 import os
 import hashlib
-from flask import request, make_response
+import time
+from flask import g, request, make_response, render_template
+from .decorators import ratelimit, msg_parser
 from . import wx
 from . import MsgParser
 from . import KwParser
 
 
 @wx.route('/')
+@ratelimit(requests=20, window=60, by="ip")
 def index():
     """ 无聊的Joke """
-    print(len(Query.queries))
-    Query.clean_query()
-    print(len(Query.queries))
     return 'I am Fine, tks for visit.'
 
 
 @wx.route('/wx', methods=['GET', 'POST'])
+@ratelimit(requests=20, window=60, by="openid")
+@msg_parser
 def weixin():
     """ Wexin """
     if request.method == 'GET':
@@ -50,17 +52,32 @@ def weixin():
             return "认证失败，不是微信服务器的请求！"
 
     if request.method == 'POST':
-        # 处理POST, 解析xml消息
-        xmldict = MsgParser.recv_msg(request.data)
-
-        # keywords 命中处理
-        reply_msg = KwParser.keywords_parser(xmldict)
-
-        # 组织xml
-        reply_xml = MsgParser.submit_msg(reply_msg)
+        # 组织回复消息内容
+        msg = {
+            'to_user_name': g.res_msg['FromUserName'],
+            'from_user_name': g.res_msg['ToUserName'],
+            'create_time': int(time.time()),
+            'content': g.res_msg['Content']
+        }
 
         # response
+        reply_xml = render_template('msg.xml', msg=msg)
         response = make_response(reply_xml)
         response.content_type = 'application/xml'
 
+        return response
+
+
+@wx.after_request
+def inject_rate_limit_headers(response):
+    """ 将ratelimit信息写入response header """
+    try:
+        requests, remaining, reset = map(int, g.view_limits)
+    except (AttributeError, ValueError):
+        return response
+    else:
+        h = response.headers
+        h.add('X-RateLimit-Remaining', remaining)
+        h.add('X-RateLimit-Limit', requests)
+        h.add('X-RateLimit-Reset', reset)
         return response

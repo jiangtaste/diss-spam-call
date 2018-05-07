@@ -7,14 +7,15 @@ def set_event(id, event, expire=60 * 60 * 24):
     """ 
     使用redis添加event 
     
-    @param  String  :id         唯一字符串，这里使用openID
-    @param  String  :event      动作类型，这里默认使用'diss_call'
-    @param  String  :expire     过期时间，默认24小时
-    @return Boolean :True/False 
+    @param  Str  :id         唯一字符串，这里使用openID
+    @param  Str  :event      动作类型，这里默认使用'diss_call'
+    @param  Str  :expire     过期时间，默认24小时
+    @return Bool :True/False 
     """
-    if redis_store.set(id, event):
+    key = ":".join(["event", id])
+    if redis_store.set(key, event):
         # redis设置成功后，设置过期时间
-        if redis_store.expire(id, expire):
+        if redis_store.expire(key, expire):
             # 过期时间设置成功后，返回True
             return True
         else:
@@ -27,11 +28,12 @@ def get_event(id):
     """ 
     从redis中获取event
 
-    @param  String  :id         唯一字符，这里使用openID
-    @return String  :event      event
+    @param  Str  :id         唯一字符，这里使用openID
+    @return Str  :event      event
     @return None
     """
-    event = redis_store.get(id)
+    key = key = ":".join(["event", id])
+    event = redis_store.get(key)
     if event:
         # event为bytes，使用decode转为str
         return event.decode('utf-8')

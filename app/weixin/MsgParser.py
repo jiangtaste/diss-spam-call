@@ -2,6 +2,7 @@
 
 import time
 import xml.etree.cElementTree as ET
+from . import messages
 
 
 def recv_msg(oriData):
@@ -39,47 +40,17 @@ def recv_msg(oriData):
         xmldict = {
             'FromUserName': FromUserName,
             'ToUserName': ToUserName,
-            'Content': '暂不支持此类型消息',
+            'Content': messages.unknown_type,
             'MsgType': MsgType
         }
     elif MsgType == 'event':
         # 消息类型为event, 切event为subscribe时
         if xmldata.find('Event').text == 'subscribe':
             xmldict = {
-                'FromUserName':
-                FromUserName,
-                'ToUserName':
-                ToUserName,
-                'Content':
-                '谢谢您的关注！若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责',
-                'MsgType':
-                MsgType
+                'FromUserName': FromUserName,
+                'ToUserName': ToUserName,
+                'Content': messages.subscribe,
+                'MsgType': MsgType
             }
 
     return xmldict
-
-
-def submit_msg(content_dict={': '}, type='text'):
-    """
-    编制回复信息
-
-    :param content_dict:
-    :param type:
-    :return:
-    """
-    to_name = content_dict['FromUserName']
-    from_name = content_dict['ToUserName']
-    content = content_dict['Content']
-
-    reply_xml = """
-    <xml>
-        <ToUserName><![CDATA[%s]]></ToUserName>
-        <FromUserName><![CDATA[%s]]></FromUserName>
-        <CreateTime>%s</CreateTime>
-        <MsgType><![CDATA[text]]></MsgType>
-        <Content><![CDATA[%s]]></Content>
-        <FuncFlag>0</FuncFlag>
-    </xml>
-    """
-
-    return reply_xml % (to_name, from_name, int(time.time()), content)

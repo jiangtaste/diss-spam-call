@@ -1,6 +1,7 @@
 """ 消息关键字回复 """
 import time
-from . import DissCall, eventParser
+from . import DissCall, EventParser
+from . import messages
 
 diss_call_keywords = ['骚扰电话', '骚扰号码']
 
@@ -17,7 +18,7 @@ def keywords_parser(msg):
     id = msg['FromUserName']
 
     # 查询event
-    event = eventParser.get_event(id)
+    event = EventParser.get_event(id)
 
     if event:
         # event存在，优先处理event
@@ -30,36 +31,35 @@ def keywords_parser(msg):
                 if DissCall.start_call(phone_num):
                     # 提交成功
 
-                    msg['Content'] = '成功DISS{phone}一次，已将其加入DISS骚扰队列。'.format(
-                        phone=phone)
+                    msg['Content'] = messages.diss_success.format(phone=phone)
                     return msg
                 else:
                     # 提交失败
-                    msg['Content'] = 'DISS{phone}失败，请稍后重试！'.format(phone=phone)
+                    msg['Content'] = messages.diss_failed.format(phone=phone)
                     return msg
 
             else:
                 # 电话验证不通过
-                msg['Content'] = '请输入合法的电话号码：'
+                msg['Content'] = messages.invalide_phone
                 return msg
         else:
             # 电话验证不通过
-            msg['Content'] = '不支持的事件'
+            msg['Content'] = messages.unknown_event
             return msg
     elif msg['Content'] in diss_call_keywords:
         # event不存在，但命中diss_call关键字
         # 添加diss_call的event, 默认24小时后过期
-        eventParser.set_event(id, 'diss_call')
+        EventParser.set_event(id, 'diss_call')
 
         # 组织msg
-        msg['Content'] = '请添加骚扰过您的电话：'
+        msg['Content'] = messages.enter_phone
         return msg
     else:
         # 未命中任何关键字
         if msg['MsgType'] == 'text':
             # 仅当文本类型为text时
-            msg['Content'] = '不支持指令：{content}。若需腹黑骚扰，请先回复“骚扰号码”或“骚扰电话”触发骚扰指令，然后输入骚扰过你的号码。（千万别拿自己或好友的号码来测试，不对其后果负责）'.format(
-                content=msg['Content'])
+            msg['Content'] = messages.unknown_command.format(
+                command=msg['Content'])
             return msg
         else:
             # 文本类型为event或image等，返回MsgParser处理后的内容
