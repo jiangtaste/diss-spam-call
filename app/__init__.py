@@ -16,7 +16,7 @@ def create_app(env):
     centry.init_app(app)
     redis_store.init_app(app)
 
-    from .wexin import wx as wx_blueprint
+    from .weixin import wx as wx_blueprint
     app.register_blueprint(wx_blueprint)
 
     return app
