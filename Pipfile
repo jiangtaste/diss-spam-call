@@ -11,6 +11,8 @@ raven = "*"
 blinker = "*"
 python-dotenv = "*"
 schedule = "*"
+flask-redis = "*"
+flask-script = "*"
 
 [dev-packages]
 pydocstyle = "*"

@@ -133,15 +133,14 @@ def check_phone(phone):
         return False
 
 
-# 作者：阿阿聪
-# 链接：https://www.zhihu.com/question/52841349/answer/132564221
-# 来源：知乎
-# 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-
-
 def loads_jsonp(_jsonp):
     """ 
     解析jsonp
+    
+    # 作者：阿阿聪
+    # 链接：https://www.zhihu.com/question/52841349/answer/132564221
+    # 来源：知乎
+    # 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
     :param _jsonp
     :return json

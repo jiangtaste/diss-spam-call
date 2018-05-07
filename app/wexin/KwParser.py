@@ -1,7 +1,6 @@
 """ 消息关键字回复 """
 import time
-from app.models import Query
-from . import DissCall
+from . import DissCall, eventParser
 
 diss_call_keywords = ['骚扰电话', '骚扰号码']
 
@@ -15,15 +14,15 @@ def keywords_parser(msg):
     """
     # 获取数据，方便使用
     phone = msg['Content']
-    query_id = msg['FromUserName']
+    id = msg['FromUserName']
 
-    # 查询query
-    query = Query.filter_by_id(query_id)
+    # 查询event
+    event = eventParser.get_event(id)
 
-    if query:
-        # query存在，优先处理query
-        if query.action == 'diss_call':
-            # 开始diss_call骚扰，先使用DissCall验证输入的号码
+    if event:
+        # event存在，优先处理event
+        if event == 'diss_call':
+            # diss_call骚扰，使用DissCall验证输入的号码
             phone_num = DissCall.check_phone(phone)
 
             if phone_num:
@@ -31,10 +30,8 @@ def keywords_parser(msg):
                 if DissCall.start_call(phone_num):
                     # 提交成功
 
-                    expire = query.expire - int(time.time())
-
-                    msg['Content'] = '成功DISS{phone}一次，已将其加入DISS骚扰队列。你可在{expire}秒内继续添加骚扰号码。'.format(
-                        phone=phone, expire=expire)
+                    msg['Content'] = '成功DISS{phone}一次，已将其加入DISS骚扰队列。'.format(
+                        phone=phone)
                     return msg
                 else:
                     # 提交失败
@@ -45,10 +42,14 @@ def keywords_parser(msg):
                 # 电话验证不通过
                 msg['Content'] = '请输入合法的电话号码：'
                 return msg
+        else:
+            # 电话验证不通过
+            msg['Content'] = '不支持的事件'
+            return msg
     elif msg['Content'] in diss_call_keywords:
-        # query不存在，但命中diss_call关键字
-        # 添加diss_call的query, 360s后过期
-        action = Query(query_id, 'diss_call', 360)
+        # event不存在，但命中diss_call关键字
+        # 添加diss_call的event, 默认24小时后过期
+        eventParser.set_event(id, 'diss_call')
 
         # 组织msg
         msg['Content'] = '请添加骚扰过您的电话：'

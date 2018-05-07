@@ -10,6 +10,9 @@ from . import KwParser
 @wx.route('/')
 def index():
     """ 无聊的Joke """
+    print(len(Query.queries))
+    Query.clean_query()
+    print(len(Query.queries))
     return 'I am Fine, tks for visit.'
 
 
