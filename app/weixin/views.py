@@ -5,7 +5,7 @@ import time
 from flask import g, request, make_response, render_template
 from .decorators import ratelimit, msg_parser
 from . import wx
-from . import KwParser
+from .dispatch import dispatch
 
 
 @wx.route('/')
@@ -51,17 +51,19 @@ def weixin():
             return "认证失败，不是微信服务器的请求！"
 
     if request.method == 'POST':
+        # 使用dispatch处理消息
+        res_msg = dispatch(g.res_msg)
         # 组织回复消息内容
         msg = {
-            'to_user_name': g.res_msg['FromUserName'],
-            'from_user_name': g.res_msg['ToUserName'],
+            'to_user_name': res_msg['FromUserName'],
+            'from_user_name': res_msg['ToUserName'],
             'create_time': int(time.time()),
-            'content': g.res_msg['Content']
+            'content': res_msg['Content']
         }
 
         # response
-        reply_xml = render_template('msg.xml', msg=msg)
-        response = make_response(reply_xml)
+        res_xml = render_template('msg.xml', msg=msg)
+        response = make_response(res_xml)
         response.content_type = 'application/xml'
 
         return response
