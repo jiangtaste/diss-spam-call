@@ -1,9 +1,20 @@
+""" 
+这里是打电话的逻辑
+
+1. 验证手机
+2. 添加提交diss电话，使用Queue
+3. 选择call渠道，目前只有bdlxb
+"""
 import re
+from ..call.bd import start_call
 
 
 def add_queue(phone):
-    # TODO 完善call逻辑
-    return True
+    # TODO，使用Queue批量提交Call
+    if start_call(phone):
+        return True
+    else:
+        return False
 
 
 def check_phone(phone):
