@@ -48,33 +48,27 @@ def update_bids(bids):
     return True
 
 
-def add(phone, times):
+def add(phone):
     """ 
-    # 处理提交电话的逻辑
+    根据提交电话后反悔的状态码，处理商户id的有效性
 
-    1. 根据提交电话后反悔的状态码，处理商户id的有效性
-    2. 根据times处理提交电话的次数
     @param  phone   需提交的号码
-    @param  times   需提交的次数
     @return True    任务完成
     """
-    while times > 0:
-        # 获取商户列表
-        bids = get_bids()
+    # 获取商户列表
+    bids = get_bids()
 
-        # 随机一个商户
-        index = random.randint(0, len(bids) - 1)
+    # 随机一个商户
+    index = random.randint(0, len(bids) - 1)
 
-        # 提交次数大于0，提交电话
-        call_status = call(phone, bids[index])
+    # 提交电话
+    call_status = call(phone, bids[index])
 
+    while True:
         if call_status == 0:
             # 大概率会收到骚扰号码，记为有效提交。并休息2分钟
             print('商户ID：{} 骚扰成功，休息2分钟再来下一波'.format(bids[index]))
-            time.sleep(120)
-
-            # 更新计数
-            times = times - 1
+            return True
         elif call_status == 105:
             # 呼叫过于频繁, 休息2分钟后执行
             print('呼叫过于频繁，休息两分钟')
@@ -88,9 +82,6 @@ def add(phone, times):
             update_bids(bids)
             # 休息两分钟
             time.sleep(120)
-
-    # 当任务执行完毕后，返回True
-    return True
 
 
 def call(phone, bid):

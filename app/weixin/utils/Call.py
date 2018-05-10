@@ -11,6 +11,7 @@ import queue
 import time
 from threading import Thread
 from ..call import BDCall
+from app import redis_store
 
 queue = queue.Queue()
 
@@ -24,22 +25,33 @@ def add_queue(phone):
 
 def producer(phone):
     """ 生产者 """
-    queue.put(phone)
+    # 随机次数，一切看脸
+    times = random.randint(5, 15)
+    for t in range(1, times):
+        queue.put(phone)
 
 
-def consumer():
-    """ 消费者 """
-    while True:
-        if queue.qsize() > 0:
-            # 队列中存在任务
-            times = random.randint(1, 10)
-            phone = queue.get()
+class Consumer(Thread):
+    """ 消费者类 """
 
-            # call会阻塞，执行完后返回
-            BDCall.add(phone, times)
-        else:
-            # 队列为空, 消费者空闲，后续等待生产者触发
-            print('队列为空，等你来哦')
+    def run(self):
+        """ 消费者 """
+
+        while True:
+            n = queue.qsize()
+
+            print(n)
+            if n > 0:
+                phone = queue.get()
+                BDCall.add(phone)
+                print('Done')
+            else:
+                print('queue is empty!')
+                time.sleep(120)
+
+
+c = Consumer()
+c.start()
 
 
 def check_phone(phone):

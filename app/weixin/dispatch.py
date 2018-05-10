@@ -13,9 +13,6 @@ from flask import make_response, g
 from .utils import Keyword, Event, Call
 from . import messages
 
-# 运行consumer
-Call.consumer()
-
 
 def dispatch(msg):
     """ 
