@@ -25,28 +25,21 @@ def add_queue(phone):
 def producer(phone):
     """ 生产者 """
     queue.put(phone)
-    consumer()
 
 
 def consumer():
     """ 消费者 """
-    # 是否空闲
-    idle = True
-
-    while idle:
-        idle = False
-
+    while True:
         if queue.qsize() > 0:
             # 队列中存在任务
             times = random.randint(1, 10)
             phone = queue.get()
 
-            # call会阻塞，执行完后返回True
-            idle = BDCall.add(phone, times)
+            # call会阻塞，执行完后返回
+            BDCall.add(phone, times)
         else:
             # 队列为空, 消费者空闲，后续等待生产者触发
             print('队列为空，等你来哦')
-            idle = True
 
 
 def check_phone(phone):
