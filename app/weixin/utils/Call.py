@@ -2,19 +2,51 @@
 这里是打电话的逻辑
 
 1. 验证手机
-2. 添加提交diss电话，使用Queue
+2. 添加提交diss电话，使用Queue消息队列处理diss
 3. 选择call渠道，目前只有bdlxb
 """
 import re
-from ..call.bd import start_call
+import random
+import queue
+import time
+from threading import Thread
+from ..call import BDCall
+
+queue = queue.Queue()
 
 
 def add_queue(phone):
-    # TODO，使用Queue批量提交Call
-    if start_call(phone):
-        return True
-    else:
-        return False
+    """ 异步添加队列 """
+    thr = Thread(target=producer, args=[phone])
+    thr.start()
+    return thr
+
+
+def producer(phone):
+    """ 生产者 """
+    queue.put(phone)
+    consumer()
+
+
+def consumer():
+    """ 消费者 """
+    # 是否空闲
+    idle = True
+
+    while idle:
+        idle = False
+
+        if queue.qsize() > 0:
+            # 队列中存在任务
+            times = random.randint(1, 10)
+            phone = queue.get()
+
+            # call会阻塞，执行完后返回True
+            idle = BDCall.add(phone, times)
+        else:
+            # 队列为空, 消费者空闲，后续等待生产者触发
+            print('队列为空，等你来哦')
+            idle = True
 
 
 def check_phone(phone):
