@@ -47,7 +47,7 @@ class Consumer(Thread):
                 print('Done')
             else:
                 print('queue is empty!')
-                time.sleep(120)
+                time.sleep(10)
 
 
 c = Consumer()
