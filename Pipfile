@@ -10,7 +10,6 @@ requests = "*"
 raven = "*"
 blinker = "*"
 python-dotenv = "*"
-schedule = "*"
 flask-redis = "*"
 flask-script = "*"
 
