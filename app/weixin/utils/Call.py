@@ -41,7 +41,7 @@ class Consumer(Thread):
             print(phone)
             if phone:
                 BDCall.add(phone)
-                print('Done @ {}'.format(time.asctime())
+                print('Done @ {}'.format(time.asctime()))
                 print('还剩{}条记录，2分钟后开始处理'.format(queue.qsize()))
                 time.sleep(120)
                 continue
