@@ -2,6 +2,9 @@
 排山倒海的推广电话，吾辈当以毒攻毒 
 
 这里全是BDCall的逻辑，自行看注释吧
+
+1. 随机3-5个bid提交
+2. 随机挂起2-10分钟休息
 """
 import requests
 import time
@@ -61,27 +64,33 @@ def add(phone):
     # 随机一个商户
     index = random.randint(0, len(bids) - 1)
 
-    while True:
+    # 随机次数
+    times = random.randint(3, 5)
+
+    while times > 0:
         # 提交电话
         call_status = call(phone, bids[index])
 
         if call_status == 0:
-            # 大概率会收到骚扰号码，记为有效提交。并休息2分钟
+            # 大概率会收到骚扰号码，记为有效提交。
             print('BID：{} 成功'.format(bids[index]))
-            return True
-        elif call_status == 105:
-            # 呼叫过于频繁, 休息2分钟后执行
-            print('呼叫过于频繁，2分钟后重试')
-            time.sleep(120)
+            times = times - 1
+        elif call_status == 105 or call_status == 104:
+            # 呼叫过于频繁
+            print('呼叫过于频繁')
         else:
             # 短信通知等场景, 该bid不太有效
-            print('不可靠BID：{}，2分钟后重试'.format(bids[index]))
+            print('不可靠BID：{}'.format(bids[index]))
             # 删除之
             bids.pop(index)
             # 更新之
             update_bids(bids)
-            # 休息两分钟
-            time.sleep(120)
+
+        # 4分钟后继续
+        time.sleep(60 * random.randint(2, 10))
+
+    print('骚扰{}完成'.format(phone))
+    return True
 
 
 def call(phone, bid):

@@ -1,57 +1,16 @@
-""" 
-这里是打电话的逻辑
-
-1. 验证手机
-2. 添加提交diss电话，使用Queue消息队列处理diss
-3. 选择call渠道，目前只有bdlxb
-"""
+""" 这里是打电话的逻 """
 import re
 import random
-import queue
 import time
 from threading import Thread
 from ..call import BDCall
-from app import redis_store
-
-queue = queue.Queue()
 
 
 def add_queue(phone):
     """ 异步添加队列 """
-    thr = Thread(target=producer, args=[phone])
+    thr = Thread(target=BDCall.add, args=[phone])
     thr.start()
     return thr
-
-
-def producer(phone):
-    """ 生产者 """
-    # 随机次数，一切看脸
-    times = random.randint(5, 15)
-    for t in range(1, times):
-        queue.put(phone)
-
-
-class Consumer(Thread):
-    """ 消费者类 """
-
-    def run(self):
-        """ 消费者 """
-        print('消费者来了')
-        while True:
-            phone = queue.get()
-            print(phone)
-            if phone:
-                BDCall.add(phone)
-                print('Done @ {}'.format(time.asctime()))
-                print('还剩{}条记录，2分钟后开始处理'.format(queue.qsize()))
-                time.sleep(120)
-                continue
-            print('Null @ {}'.format(time.asctime()))
-            time.sleep(120)
-
-
-c = Consumer()
-c.start()
 
 
 def check_phone(phone):
