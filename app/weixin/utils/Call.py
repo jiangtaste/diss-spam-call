@@ -36,18 +36,17 @@ class Consumer(Thread):
 
     def run(self):
         """ 消费者 """
-
         while True:
-            n = queue.qsize()
-
-            print(n)
-            if n > 0:
-                phone = queue.get()
+            phone = queue.get()
+            print(phone)
+            if phone:
                 BDCall.add(phone)
-                print('Done')
-            else:
-                print('queue is empty!')
-                time.sleep(10)
+                print('Done @ {}'.format(time.asctime())
+                print('还剩{}条记录，2分钟后开始处理'.format(queue.qsize()))
+                time.sleep(120)
+                continue
+            print('Null @ {}'.format(time.asctime()))
+            time.sleep(120)
 
 
 c = Consumer()

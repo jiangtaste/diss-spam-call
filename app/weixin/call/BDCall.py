@@ -61,21 +61,21 @@ def add(phone):
     # 随机一个商户
     index = random.randint(0, len(bids) - 1)
 
-    # 提交电话
-    call_status = call(phone, bids[index])
-
     while True:
+        # 提交电话
+        call_status = call(phone, bids[index])
+
         if call_status == 0:
             # 大概率会收到骚扰号码，记为有效提交。并休息2分钟
-            print('商户ID：{} 骚扰成功，休息2分钟再来下一波'.format(bids[index]))
+            print('BID：{} 成功'.format(bids[index]))
             return True
         elif call_status == 105:
             # 呼叫过于频繁, 休息2分钟后执行
-            print('呼叫过于频繁，休息两分钟')
+            print('呼叫过于频繁，2分钟后重试')
             time.sleep(120)
         else:
             # 短信通知等场景, 该bid不太有效
-            print('不靠谱商户ID：{}，休息2分钟再来下一波'.format(bids[index]))
+            print('不可靠BID：{}，2分钟后重试'.format(bids[index]))
             # 删除之
             bids.pop(index)
             # 更新之
