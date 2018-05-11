@@ -86,7 +86,9 @@ def add(phone):
             # 更新之
             update_bids(bids)
 
-        # 4分钟后继续
+        # 休眠一会儿继续，防止呼叫过于频繁
+        t = random.randint(2, 10)
+        print('{}分钟后继续'.format(t))
         time.sleep(60 * random.randint(2, 10))
 
     print('骚扰{}完成'.format(phone))
