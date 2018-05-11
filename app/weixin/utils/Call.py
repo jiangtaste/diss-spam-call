@@ -27,12 +27,15 @@ def producer(phone):
     """ 生产者 """
     # 随机次数，一切看脸
     times = random.randint(5, 15)
+    print('Diss ->' + phone + ': ' + times + 'times!')
     for t in range(1, times):
         queue.put(phone)
 
 
 class Consumer(Thread):
     """ 消费者类 """
+
+    print('开启消费者')
 
     def run(self):
         """ 消费者 """
