@@ -64,7 +64,13 @@ def add(phone):
     # 随机次数
     times = random.randint(3, 5)
 
-    while times > 0:
+    # success次数
+    success = 0
+
+    # 呼叫频繁重试次数，一般是同一个号码请求太多次了，为了保证业务持久可用，超过重试次数，则直接kill掉此次任务。
+    retry_limit = 4
+
+    while times > 0 and retry_limit > 0:
         # 随机一个商户
         index = random.randint(0, len(bids) - 1)
 
@@ -74,10 +80,15 @@ def add(phone):
         if call_status == 0:
             # 大概率会收到骚扰号码，记为有效提交。
             print('BID：{} 成功'.format(bids[index]))
+
             times = times - 1
+            success = success + 1
         elif call_status == 105 or call_status == 104:
-            # 呼叫过于频繁
-            print('呼叫过于频繁，BID：{}'.format(bids[index]))
+            # 呼叫过于频繁, 更新重试限制次数
+            retry_limit = retry_limit - 1
+
+            print('BID：{}。呼叫过于频繁，重试剩余次数：{}。'.format(bids[index], retry_limit))
+
         else:
             # 短信通知等场景, 该bid不太有效
             print('不可靠BID：{}'.format(bids[index]))
@@ -91,7 +102,7 @@ def add(phone):
         print('{}分钟后继续'.format(t))
         time.sleep(60 * random.randint(2, 10))
 
-    print('骚扰{}完成'.format(phone))
+    print('骚扰{}{}次，成功：{}次'.format(phone, times, success))
     return True
 
 
