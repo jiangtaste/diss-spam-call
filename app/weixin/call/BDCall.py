@@ -61,13 +61,13 @@ def add(phone):
     # 获取商户列表
     bids = get_bids()
 
-    # 随机一个商户
-    index = random.randint(0, len(bids) - 1)
-
     # 随机次数
     times = random.randint(3, 5)
 
     while times > 0:
+        # 随机一个商户
+        index = random.randint(0, len(bids) - 1)
+
         # 提交电话
         call_status = call(phone, bids[index])
 
@@ -77,7 +77,7 @@ def add(phone):
             times = times - 1
         elif call_status == 105 or call_status == 104:
             # 呼叫过于频繁
-            print('呼叫过于频繁')
+            print('呼叫过于频繁，BID：{}'.format(bids[index]))
         else:
             # 短信通知等场景, 该bid不太有效
             print('不可靠BID：{}'.format(bids[index]))
