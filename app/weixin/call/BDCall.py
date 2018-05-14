@@ -100,7 +100,7 @@ def add(phone):
         # 休眠一会儿继续，防止呼叫过于频繁
         t = random.randint(2, 10)
         print('{}分钟后继续'.format(t))
-        time.sleep(t)
+        time.sleep(60 * t)
 
     print('骚扰{}{}次，成功：{}次'.format(phone, times, success))
     return True
