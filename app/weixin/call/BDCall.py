@@ -102,7 +102,7 @@ def add(phone):
         print('{}分钟后继续'.format(t))
         time.sleep(60 * t)
 
-    print('骚扰{}{}次，成功：{}次'.format(phone, times, success))
+    print('骚扰{} > {}次，成功：{}次'.format(phone, times, success))
     return True
 
 
