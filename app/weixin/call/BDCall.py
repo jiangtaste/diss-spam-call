@@ -88,7 +88,18 @@ def add(phone):
             retry_limit = retry_limit - 1
 
             print('BID：{}。呼叫过于频繁，重试剩余次数：{}。'.format(bids[index], retry_limit))
+        elif call_status == 152:
+            # 153段某些号码会报电话号码错误，很诡异（code: 152）
+            # 直接放弃挣扎吧
+            retry_limit = 0
 
+            print('号码有误：{}。'.format(phone))
+        elif call_status == 151:
+            # 请求非法，不知道什么鬼
+            # 放弃挣扎
+            retry_limit = 0
+
+            print('BID：{}，Phone：{}。请求非法。'.format(bids[index], phone))
         else:
             # 短信通知等场景, 该bid不太有效
             print('不可靠BID：{}'.format(bids[index]))
