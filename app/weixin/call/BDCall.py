@@ -64,6 +64,9 @@ def add(phone):
     # 随机次数
     times = random.randint(3, 5)
 
+    # 方便日志打印，总骚扰次数
+    total = times
+
     # success次数
     success = 0
 
@@ -113,7 +116,7 @@ def add(phone):
         print('{}分钟后继续'.format(t))
         time.sleep(60 * t)
 
-    print('骚扰{} > {}次，成功：{}次'.format(phone, times, success))
+    print('骚扰{} > {}次，成功：{}次'.format(phone, total, success))
     return True
 
 
