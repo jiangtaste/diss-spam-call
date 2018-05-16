@@ -92,7 +92,7 @@ def add(phone):
 
             print('BID：{}。呼叫过于频繁，重试剩余次数：{}。'.format(bids[index], retry_limit))
         elif call_status == 152:
-            # 153段某些号码会报电话号码错误，很诡异（code: 152）
+            # 某些号码会报电话号码错误，很诡异（code: 152）
             # 直接放弃挣扎吧
             retry_limit = 0
 

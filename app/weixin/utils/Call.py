@@ -31,7 +31,7 @@ def check_phone(phone):
         # 验证通过则返回去除非空字符的纯数字11位座机/手机号码
         if len(phone_num) > 11:
             # 例：+86 180-0000-0000
-            return phone_num[-11:-1]
+            return phone_num[-11:]
         return phone_num
     else:
         return False
