@@ -104,3 +104,4 @@ ENV/
 .vscode/
 uwsgi.ini
 system/
+firebase_key.json

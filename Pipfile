@@ -12,6 +12,7 @@ blinker = "*"
 python-dotenv = "*"
 flask-redis = "*"
 flask-script = "*"
+firebase-admin = "*"
 
 [dev-packages]
 pydocstyle = "*"

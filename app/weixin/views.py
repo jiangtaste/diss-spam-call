@@ -4,12 +4,18 @@ import hashlib
 import time
 import json
 
-from flask import g, request, make_response, render_template
-from app import redis_store
+from flask import g, request, make_response, render_template, jsonify
+from app import redis_store, fire_store
 
 from .decorators import ratelimit, msg_parser
 from . import wx
 from .dispatch import dispatch
+
+# firestore refs
+bids_col = fire_store.collection('bids')  # 商户ID
+
+# 批量写入
+batch = fire_store.batch()
 
 
 @wx.route('/')
@@ -31,6 +37,65 @@ def index():
         redis_store.expire('bids', 60 * 60 * 24 * 30)
 
     return render_template('/index.html', bids=bids)
+
+
+@wx.route('/sync-bids', methods=['GET', 'POST'])
+@ratelimit(requests=20, window=60, by="ip")
+def sync_bid():
+    """ 同步商户ID """
+    if request.method == 'POST':
+        # POST
+        # 从redis中获取bids
+        bids = redis_store.get('bids')
+
+        if bids:
+            # redis中存在bids, 解析之
+            bids = json.loads(bids)
+
+        # 准备写入事物
+        times = len(bids) // 500
+        if times > 1:
+            # 大于等于500
+            for x in range(times):
+                # 分片
+                for index, bid in enumerate(bids[(x * 500):(x * 500 + 500)]):
+                    print(index + (0 * 500), bid)
+                    batch.set(
+                        bids_col.document(str(index + (0 * 500))),
+                        {'name': bid})
+
+                # 批量写入fierestore
+                batch.commit()
+        else:
+            # 小于500
+            for index, bid in enumerate(bids):
+                print(index, bid)
+                batch.set(bids_col.document(str(index)), {'name': bid})
+
+            # 批量写入fierestore
+            batch.commit()
+
+        # 从firestore读取
+        _bids = bids_ref.get()
+
+        # 生成响应
+        response = jsonify(_bids)
+        response.status_code = 201
+
+        return response
+    else:
+        # GET
+        # 从redis中获取bids
+        bid_docs = bids_col.get()
+
+        bids = []
+        for doc in bid_docs:
+            bids.append({'id': doc.id, 'data': doc.to_dict()})
+
+        # 生成响应
+        response = jsonify(bids)
+        response.status_code = 200
+        return response
 
 
 @wx.route('/wx', methods=['GET', 'POST'])
