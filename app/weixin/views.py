@@ -2,6 +2,7 @@
 import os
 import hashlib
 import time
+import json
 
 from flask import g, request, make_response, render_template
 from app import redis_store
@@ -24,7 +25,10 @@ def index():
     else:
         # 不存在，初始化
         bids = list(range(0, 9200))
-        update_bids(bids)
+        redis_store.set('bids', json.dumps(bids))
+
+        # 30天过期
+        redis_store.expire('bids', 60 * 60 * 24 * 30)
 
     return render_template('/index.html', bids=bids)
 
