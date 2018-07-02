@@ -2,7 +2,10 @@
 import os
 import hashlib
 import time
+
 from flask import g, request, make_response, render_template
+from app import redis_store
+
 from .decorators import ratelimit, msg_parser
 from . import wx
 from .dispatch import dispatch
@@ -11,8 +14,19 @@ from .dispatch import dispatch
 @wx.route('/')
 @ratelimit(requests=20, window=60, by="ip")
 def index():
-    """ 无聊的Joke """
-    return 'I am Fine, tks for visit.'
+    """ 获取可用商户ID """
+    # 从redis中获取bids
+    bids = redis_store.get('bids')
+
+    if bids:
+        # redis中存在bids
+        bids = json.loads(bids)
+    else:
+        # 不存在，初始化
+        bids = list(range(0, 9200))
+        update_bids(bids)
+
+    return render_template('/index.html', bids=bids)
 
 
 @wx.route('/wx', methods=['GET', 'POST'])
