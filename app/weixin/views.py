@@ -67,6 +67,8 @@ def sync_bid():
             # 不能被500整除的部分
             for bid in bids[(times * 500):]:
                 batch.set(bids_col.document(str(bid)), {'name': bid})
+
+            # 批量写入fierestore
             batch.commit()
         else:
             # 小于500
