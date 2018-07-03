@@ -86,7 +86,7 @@ def sync_bid():
         # 生成响应
         response = jsonify(bids)
         response.status_code = 201
-        return 'response'
+        return response
     else:
         # GET
         # 从firestore中获取bids
