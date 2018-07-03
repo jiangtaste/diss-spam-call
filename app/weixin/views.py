@@ -58,20 +58,20 @@ def sync_bid():
             # 大于等于500
             for x in range(times):
                 # 分片
-                for bid in enumerate(bids[(x * 500):(x * 500 + 500)]):
+                for bid in bids[(x * 500):(x * 500 + 500)]:
                     batch.set(bids_col.document(str(bid)), {'name': bid})
 
                 # 批量写入fierestore
                 batch.commit()
 
             # 不能被500整除的部分
-            for bid in enumerate(bids[(times * 500):]):
+            for bid in bids[(times * 500):]:
                 batch.set(bids_col.document(str(bid)), {'name': bid})
+            batch.commit()
         else:
             # 小于500
-            for index, bid in enumerate(bids):
-                print(index, bid)
-                batch.set(bids_col.document(str(index)), {'name': bid})
+            for bid in bids:
+                batch.set(bids_col.document(str(bid)), {'name': bid})
 
             # 批量写入fierestore
             batch.commit()
@@ -86,7 +86,7 @@ def sync_bid():
         # 生成响应
         response = jsonify(bids)
         response.status_code = 201
-        return response
+        return 'response'
     else:
         # GET
         # 从firestore中获取bids
