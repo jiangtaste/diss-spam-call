@@ -31,13 +31,13 @@ def get_validated_phone_num(phone):
 
     if phone_re.match(num):
         # 验证通过
-        if len(num) > 11: 
+        if len(num) > 11:
             # 号码长度大于11，只取后11位
             # 例：+86 180-0000-0000
             phone_num = num[-11:]
         else:
             phone_num = num
-    elif:
+    else:
         # 验证不通过，返回None
         phone_num = None
 
