@@ -50,7 +50,7 @@ def dispatch(msg):
             # 存在event任务, 处理任务
             if event == 'diss_call':
                 # 当前只有diss_call
-                phone = Call.check_phone(content)
+                phone = Call.get_validated_phone_num(content)
                 if phone == False:
                     msg['Content'] = messages.invalide_phone
                     return msg
