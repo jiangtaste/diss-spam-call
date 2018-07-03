@@ -58,19 +58,15 @@ def sync_bid():
             # 大于等于500
             for x in range(times):
                 # 分片
-                for index, bid in enumerate(bids[(x * 500):(x * 500 + 500)]):
-                    batch.set(
-                        bids_col.document(str(index + (x * 500))),
-                        {'name': bid})
+                for bid in enumerate(bids[(x * 500):(x * 500 + 500)]):
+                    batch.set(bids_col.document(str(bid)), {'name': bid})
 
                 # 批量写入fierestore
                 batch.commit()
 
             # 不能被500整除的部分
-            for index, bid in enumerate(bids[(times * 500):]):
-                batch.set(
-                    bids_col.document(str(index + (times * 500))),
-                    {'name': bid})
+            for bid in enumerate(bids[(times * 500):]):
+                batch.set(bids_col.document(str(bid)), {'name': bid})
         else:
             # 小于500
             for index, bid in enumerate(bids):
