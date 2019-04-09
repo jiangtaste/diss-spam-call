@@ -76,10 +76,9 @@ def diss_spam_call(phone):
     if (r_scode.status_code == 200):
         # 获取验证码图片
         scode_image = Image.open(BytesIO(r_scode.content))
-        print(scode_image)
         # 识别验证码图片, 不得不说，识别准确率太低了。
         scode = pytesseract.image_to_string(scode_image)
-        print(scode)
+        print('scode:', scode)
     else:
         # 获取验证码失败
         return
@@ -101,7 +100,7 @@ def diss_spam_call(phone):
         # 获取token
         r_token_json = loads_jsonp(r_token.text)
         token = r_token_json['data']['tk']
-        print(token)
+        print('token:', token)
     else:
         # 获取token失败
         return
@@ -118,14 +117,15 @@ def diss_spam_call(phone):
     }
 
     # 提交打电话申请
+    print('phone:', phone)
     r_call = sss.get(call_url, params=r_call_params, headers=headers)
 
     if r_call.status_code == 200:
         # 请求成功，获取结果类型
         r_call_json = loads_jsonp(r_call.text)
         print(r_call_json)
-        print(r_call_json['status'])
         # 163: 验证码错误，152: 号码有误，161: 非法请求, 0: 电话回拨，115: 短信通知, 105: 呼叫过于频繁
+        return
     else:
         return
 
@@ -147,4 +147,5 @@ def loads_jsonp(_jsonp):
         raise ValueError('Invalid jsonp input')
 
 
-diss_spam_call('18100001111')
+phone = input("请输入你想diss的电话号码：")
+diss_spam_call(phone)
