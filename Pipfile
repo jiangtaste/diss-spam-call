@@ -4,21 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
-uwsgi = "*"
 requests = "*"
-raven = "*"
-blinker = "*"
-python-dotenv = "*"
-flask-redis = "*"
-flask-script = "*"
-firebase-admin = "*"
+pillow = "*"
+pytesseract = "*"
 
 [dev-packages]
-pydocstyle = "*"
 yapf = "*"
-pylint = "*"
-autopep8 = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"
