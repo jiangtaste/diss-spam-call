@@ -3,6 +3,7 @@
 ## 更新记录
 
 @19.04.09 更新：精简代码，仅保留diss骚扰电话的核心功能，增加验证码识别功能（识别度较低）。
+
 @18.7.12 更新：当前版本已失效，百度离线包已增加验证码功能。尚无精力继续鼓捣。
 
 ## 功能
@@ -38,3 +39,6 @@ MacOs 使用 homebrew 安装 pipenv tesserct：
 1. requests
 2. pillow
 3. pytesseract
+
+## 注
+“猫猫飞”公众号的相关功能见https://github.com/Jiangtaste/maomaofei
